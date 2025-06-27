@@ -1,5 +1,7 @@
-Original works of software
-==========================
+Classical works of software
+===========================
+
+**Software - the original works.**
 
 ![](./banner2.png)
 
@@ -21,4 +23,3 @@ Well, there are many:
  - Bitcoin
 
 Maybe a few of these are not foundational - ie. JS. But they had such an impact on the world that it's really interesting to study their first implementations. When the code still sucked - but it was minimal. It was a proof-of-concept. A window into the author's mind. I often find reading this code gives me a better understanding than any of the core problem they were solving.
-
