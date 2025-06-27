@@ -12,8 +12,8 @@ Well, there are many:
  - GCC
  - PostScript (PDF)
  - Linux
- - The World Wide Web
- - JavaScript
+ - The World Wide Web browser
+ - JavaScript (prev. Mocha)
  - SQLite
  - Git
  - WebKit
