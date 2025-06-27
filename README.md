@@ -1,8 +1,6 @@
 Classical works of software
 ===========================
 
-**Software - the original works.**
-
 ![](./banner2.png)
 
 I'm studying the birth of **new software ideas**.
