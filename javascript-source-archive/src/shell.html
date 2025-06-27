@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Mocha Shell</title>
+    <style>
+      body { display: flex; justify-content: center; align-items: center; }
+      textarea { font-family: monospace; width: calc(100vw - 20px); height: 180px; resize: none; border-width: 0; border: none; outline: none; overflow: auto; }
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; box-shadow: 0 0 10px #ddd; padding: 10px; }
+      #loading p { font-size: 12px;; text-align: center; font-weight: bold; }
+      #status { font-size: 12px; text-align: center; }
+      .spinner {
+        height: 40px; width: 40px; margin: 0px auto; animation: rotation 0.8s linear infinite; border-radius: 100%; background-color: rgb(200,100,250);
+        border-left: 8px solid rgb(0,150,240); border-right: 8px solid rgb(0,150,240);
+        border-bottom: 8px solid rgb(0,150,240); border-top: 8px solid rgb(100,0,200);
+      }
+      @keyframes rotation { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
+    </style>
+  </head>
+  <body>
+    <textarea class="emscripten" id="output" readonly></textarea>
+    <div id="loading">
+      <figure id="spinner"><div class="spinner"></div></figure>
+      <p>emscripten</p>
+      <div class="emscripten" id="status">...Downloading...</div>
+    </div>
+    <script>
+      const statusElement = document.getElementById('status');
+      const spinnerElement = document.getElementById('spinner');
+      const loadingElement = document.getElementById('loading');
+
+      const input = localStorage.getItem('mochaScript') || '';
+      // console.log(input);
+      let i = 0;
+
+      Module = {
+        preRun: function() {
+          function stdin() {
+            if (i < input.length) {
+              const code = input.charCodeAt(i);
+              ++i;
+              return code;
+            } else {
+              return null;
+            }
+          }
+
+          const element = document.getElementById('output');
+          let stdoutBuffer = '';
+          function stdout(code) {
+            if (code === "\n".charCodeAt(0) && stdoutBuffer !== "") {
+              console.log(stdoutBuffer);
+              element.value = stdoutBuffer + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+              stdoutBufer = '';
+            } else {
+              stdoutBuffer += String.fromCharCode(code);
+            }
+          }
+
+          let stderrBuffer = '';
+          function stderr(code) {
+            if (code === "\n".charCodeAt(0) && stderrBuffer !== "") {
+              console.error(stderrBuffer);
+              stderrBuffer = '';
+            } else {
+              stderrBuffer += String.fromCharCode(code);
+            }
+          }
+
+          FS.init(stdin, stdout, stderr);
+        },
+        setStatus: function(text) {
+          // console.log('Status:', text);
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.last.text) return;
+
+          const now = Date.now();
+          const complete = text === 'All downloads complete' || text === 'Running...' || text === '';
+          Module.setStatus.last.time = now;
+          Module.setStatus.last.text = text;
+          statusElement.innerHTML = text;
+          if (complete) {
+            loadingElement.hidden = true;
+          }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? '...Preparing...' : 'All downloads complete');
+        }
+      };
+
+      window.onerror = function() {
+        Module.setStatus('Exception thrown, see JavaScript console');
+        spinnerElement.style.display = 'none';
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    {{{ SCRIPT }}}
+  </body>
+</html>
