@@ -19,8 +19,13 @@ Well, there are many:
  - WebKit
  - BitTorrent
  - Bitcoin
- - GPT
 
 Maybe a few of these are not foundational - ie. JS. But they had such an impact on the world that it's really interesting to study their first implementations. When the code still sucked - but it was minimal. It was a proof-of-concept. A window into the author's mind. I often find reading this code gives me a better understanding than any of the core problem they were solving.
 
 Most of these works are under 10K lines of code, across 10-100 files. Contrast this with their current implementations which are often 100,000's to millions of lines more today. Reading Linux's original code and stumbling upon `execve`, learning how a process is literally executed, how the `argv` are copied into the process's memory page, how the stack is switched - is so much easier when it is so rudimentary. 
+
+
+## Work in progress.
+
+ - Ethereum
+ - GPT
